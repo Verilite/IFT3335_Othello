@@ -5,6 +5,8 @@ import pandas as pd
 import os
 import time  # Import pour ajouter un délai entre les coups
 
+from minimax2 import *
+
 # Définition des constantes
 EMPTY = 0
 BLACK = 1
@@ -152,11 +154,12 @@ def minimax_ai(board, player):
     return best_move
 
 # Structure d'une IA pour Othello (sans implémentation)
-ia_placeholder = """\
+ia_placeholder = improved_minimax_ai
 # Définissez votre fonction IA ici
 def user_ai(board, player):
-    
-"""
+    _, best_move = improved_minimax(board, 6, True, player)
+    return best_move
+
 
 ia1_placeholder = """\
 # Définissez votre fonction IA 1 ici
