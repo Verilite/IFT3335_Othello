@@ -6,31 +6,37 @@ import os
 import time  # Import pour ajouter un délai entre les coups
 
 from minimax2 import *
+from alphabeta import *
+from montecarlo import *
 
 # Définition des constantes
 EMPTY = 0
 BLACK = 1
 WHITE = -1
-DEPTH = 4 # Profondeur du Minimax
+DEPTH = 4  # Profondeur du Minimax
 
 # Chemin du fichier où sauvegarder les scores
 LEADERBOARD_FILE = "leaderboard.csv"
+
 
 # Charger le leaderboard depuis un fichier CSV au démarrage
 def load_leaderboard():
     if os.path.exists(LEADERBOARD_FILE):
         return pd.read_csv(LEADERBOARD_FILE)
-    return pd.DataFrame(columns=["ID","Nom d'équipe", "Score"])
+    return pd.DataFrame(columns=["ID", "Nom d'équipe", "Score"])
+
 
 # Sauvegarder le leaderboard dans un fichier CSV
 def save_leaderboard(df):
     df.to_csv(LEADERBOARD_FILE, index=False)
 
+
 # Charger les scores existants au démarrage
 if "leaderboard" not in st.session_state:
     st.session_state.leaderboard = load_leaderboard()
 
-def update_leaderboard(student_id,team_name, final_score):
+
+def update_leaderboard(student_id, team_name, final_score):
     df = st.session_state.leaderboard
     df["ID"] = df["ID"].astype(int)
     df["Score"] = df["Score"].astype(int)
@@ -38,18 +44,19 @@ def update_leaderboard(student_id,team_name, final_score):
     student_id = int(student_id)
     existing_index = df.index[df["ID"] == student_id].tolist()
 
-
     if existing_index:
         current_best_score = df.at[existing_index[0], "Score"]
         if final_score > current_best_score:
             df.at[existing_index[0], "Score"] = final_score
             df.at[existing_index[0], "Nom d'équipe"] = team_name
-            st.success(f"🎉 Félicitations {team_name} (ID: {student_id})! Votre score a été amélioré de {current_best_score} à {final_score}.")
+            st.success(
+                f"🎉 Félicitations {team_name} (ID: {student_id})! Votre score a été amélioré de {current_best_score} à {final_score}.")
         else:
-            st.info(f"📌 Votre score actuel ({final_score}) n'a pas dépassé votre meilleur score ({current_best_score}).")
+            st.info(
+                f"📌 Votre score actuel ({final_score}) n'a pas dépassé votre meilleur score ({current_best_score}).")
     else:
         # Ajouter un nouvel ID avec son score
-        new_entry = pd.DataFrame([[student_id,team_name, final_score]], columns=["ID","Nom d'équipe", "Score"])
+        new_entry = pd.DataFrame([[student_id, team_name, final_score]], columns=["ID", "Nom d'équipe", "Score"])
         df = pd.concat([df, new_entry], ignore_index=True)
 
     # Trier et sauvegarder
@@ -111,10 +118,12 @@ class Othello:
     def is_game_over(self):
         return not self.get_valid_moves(BLACK) and not self.get_valid_moves(WHITE)
 
+
 # Minimax AI
 def evaluate_board(board):
     """Basic evaluation function: counts the number of pieces per player."""
     return np.sum(board == WHITE) - np.sum(board == BLACK)
+
 
 def minimax(board, depth, maximizing, player):
     """Minimax AI with depth limit."""
@@ -148,30 +157,34 @@ def minimax(board, depth, maximizing, player):
                 best_move = move
         return min_eval, best_move
 
+
 def minimax_ai(board, player):
     """AI wrapper for Minimax with depth=3"""
     _, best_move = minimax(board, DEPTH, True, player)
     return best_move
 
+
 # Structure d'une IA pour Othello (sans implémentation)
-ia_placeholder = improved_minimax_ai
+ia_placeholder = "Testing AI"
+
+
 # Définissez votre fonction IA ici
 def user_ai(board, player):
-    _, best_move = improved_minimax(board, 6, True, player)
-    return best_move
+    return improved_minimax_ai(board, player)
 
 
-ia1_placeholder = """\
-# Définissez votre fonction IA 1 ici
+ia1_placeholder = "Competing AI 1"
+
+
 def user_ai1(board, player):
-    
-"""
+    return improved_alpha_beta_ai(board, player)
 
-ia2_placeholder = """\
-# Définissez votre fonction IA 2 ici
+
+ia2_placeholder = "Competing AI 2"
+
+
 def user_ai2(board, player):
-    
-"""
+    return monte_carlo_ai(board, player)
 
 
 # Interface Streamlit
@@ -186,7 +199,7 @@ team_name = st.text_input("Entrez le nom de votre équipe")
 st.write("Soumettez votre propre IA sous forme de fonction Python.")
 
 # Champ de soumission de code
-user_code = st.text_area("Entrez votre code Python ici :", height=200, placeholder= ia_placeholder)
+user_code = st.text_area("Entrez votre code Python ici :", height=200, placeholder=ia_placeholder)
 
 if student_id and team_name and user_code:
     try:
@@ -218,19 +231,20 @@ if student_id and team_name and user_code:
 
                     # Mettre à jour le plateau dans la même figure
                     ax.clear()
-                    ax.set_facecolor("#006400")  
-                    
+                    ax.set_facecolor("#006400")
+
                     for x in range(9):
-                        ax.plot([x-0.5, x-0.5], [-0.5, 7.5], color='black', linewidth=2)
-                        ax.plot([-0.5, 7.5], [x-0.5, x-0.5], color='black', linewidth=2)
-                    
+                        ax.plot([x - 0.5, x - 0.5], [-0.5, 7.5], color='black', linewidth=2)
+                        ax.plot([-0.5, 7.5], [x - 0.5, x - 0.5], color='black', linewidth=2)
+
                     for row in range(8):
                         for col in range(8):
                             if game.board[row, col] == BLACK:
                                 ax.add_patch(plt.Circle((col, row), 0.4, color='black', zorder=2))
                             elif game.board[row, col] == WHITE:
-                                ax.add_patch(plt.Circle((col, row), 0.4, color='white', zorder=2, edgecolor="black", linewidth=2))
-                    
+                                ax.add_patch(plt.Circle((col, row), 0.4, color='white', zorder=2, edgecolor="black",
+                                                        linewidth=2))
+
                     ax.set_xticks([])
                     ax.set_yticks([])
                     ax.set_xlim(-0.5, 7.5)
@@ -249,9 +263,9 @@ if student_id and team_name and user_code:
                 # Mise à jour du leaderboard
                 update_leaderboard(student_id, team_name, final_score)
 
-                
+
         else:
-            st.error("⚠️ Votre code doit définir une fonction `user_ai(board, player)`.")  
+            st.error("⚠️ Votre code doit définir une fonction `user_ai(board, player)`.")
 
     except Exception as e:
         st.error(f"❌ Erreur dans votre code : {e}")
@@ -263,15 +277,14 @@ with st.container():
     st.session_state.leaderboard["Score"] = st.session_state.leaderboard["Score"].astype(int)
     st.dataframe(st.session_state.leaderboard, use_container_width=True)
 
-
 # deux IA contre eux
 st.subheader("🤖 IA 1")
 id_ia1 = st.text_input("ID de l'étudiant IA 1")
-code_ia1 = st.text_area("Entrez le code de IA 1 :", height=200, placeholder= ia1_placeholder)
+code_ia1 = st.text_area("Entrez le code de IA 1 :", height=200, placeholder=ia1_placeholder)
 
 st.subheader("🤖 IA 2")
 id_ia2 = st.text_input("ID de l'étudiant IA 2")
-code_ia2 = st.text_area("Entrez le code de IA 2 :", height=200, placeholder= ia2_placeholder)
+code_ia2 = st.text_area("Entrez le code de IA 2 :", height=200, placeholder=ia2_placeholder)
 
 if id_ia1 and id_ia2 and code_ia1 and code_ia2:
     try:
@@ -282,7 +295,8 @@ if id_ia1 and id_ia2 and code_ia1 and code_ia2:
         exec(code_ia1, globals())
         exec(code_ia2, globals())
 
-        if "user_ai1" in globals() and "user_ai2" in globals() and callable(globals()["user_ai1"]) and callable(globals()["user_ai2"]):
+        if "user_ai1" in globals() and "user_ai2" in globals() and callable(globals()["user_ai1"]) and callable(
+                globals()["user_ai2"]):
             st.success(f"Les IA {id_ia1} et {id_ia2} ont été chargées !")
 
             if st.button("Démarrer la compétition ⚔️"):
@@ -308,18 +322,19 @@ if id_ia1 and id_ia2 and code_ia1 and code_ia2:
 
                     # Mettre à jour le plateau dans la même figure
                     ax.clear()
-                    ax.set_facecolor("#006400")  
+                    ax.set_facecolor("#006400")
 
                     for x in range(9):
-                        ax.plot([x-0.5, x-0.5], [-0.5, 7.5], color='black', linewidth=2)
-                        ax.plot([-0.5, 7.5], [x-0.5, x-0.5], color='black', linewidth=2)
+                        ax.plot([x - 0.5, x - 0.5], [-0.5, 7.5], color='black', linewidth=2)
+                        ax.plot([-0.5, 7.5], [x - 0.5, x - 0.5], color='black', linewidth=2)
 
                     for row in range(8):
                         for col in range(8):
                             if game.board[row, col] == BLACK:
                                 ax.add_patch(plt.Circle((col, row), 0.4, color='black', zorder=2))
                             elif game.board[row, col] == WHITE:
-                                ax.add_patch(plt.Circle((col, row), 0.4, color='white', zorder=2, edgecolor="black", linewidth=2))
+                                ax.add_patch(plt.Circle((col, row), 0.4, color='white', zorder=2, edgecolor="black",
+                                                        linewidth=2))
 
                     ax.set_xticks([])
                     ax.set_yticks([])
@@ -345,7 +360,8 @@ if id_ia1 and id_ia2 and code_ia1 and code_ia2:
                     st.warning(f"🤝 Match nul entre {id_ia1} et {id_ia2} ! Score : {score_ia1} - {score_ia2}")
 
         else:
-            st.error("⚠️ Les codes doivent définir des fonctions `user_ai1(board, player)` et `user_ai2(board, player)`.")  
+            st.error(
+                "⚠️ Les codes doivent définir des fonctions `user_ai1(board, player)` et `user_ai2(board, player)`.")
 
     except Exception as e:
         st.error(f"❌ Erreur dans les codes soumis : {e}")
