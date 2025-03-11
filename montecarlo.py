@@ -3,6 +3,13 @@ import math
 import random
 from game import Othello
 
+"""
+Sources consulted:
+https://en.wikipedia.org/wiki/Monte_Carlo_tree_search
+Livre de Russell et Norvig: Artificial Intelligence: A Modern Approach, 4th US ed.
+https://www.geeksforgeeks.org/ml-monte-carlo-tree-search-mcts/
+"""
+
 EMPTY = 0
 BLACK = 1
 WHITE = -1

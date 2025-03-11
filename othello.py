@@ -170,7 +170,7 @@ ia_placeholder = "Testing AI"
 
 # Définissez votre fonction IA ici
 def user_ai(board, player):
-    return improved_minimax_ai(board, player)
+    return improved_alpha_beta_ai(board, player)
 
 
 ia1_placeholder = "Competing AI 1"

@@ -1,6 +1,13 @@
 import numpy as np
 from game import Othello
 
+"""
+Sources consulted:
+https://www.ffothello.org/informatique/algorithmes/
+Livre de Russell et Norvig: Artificial Intelligence: A Modern Approach, 4th US ed.
+https://zzutk.github.io/docs/reports/2014.04%20-%20Searching%20Algorithms%20in%20Playing%20Othello.pdf
+"""
+
 # Global constants (make sure they match your main othello.py)
 EMPTY = 0
 BLACK = 1
@@ -31,10 +38,10 @@ def improved_evaluate(board, current_player):
     board_weights = np.array([
         [100, -20, 10, 5, 5, 10, -20, 100],
         [-20, -50, -2, -2, -2, -2, -50, -20],
-        [10, -2, 1, 2, 2, 1, -2, 10],
+        [10, -2, 15, 2, 2, 15, -2, 10],
         [5, -2, 2, -1, -1, 2, -2, 5],
         [5, -2, 2, -1, -1, 2, -2, 5],
-        [10, -2, 1, 2, 2, 1, -2, 10],
+        [10, -2, 15, 2, 2, 15, -2, 10],
         [-20, -50, -2, -2, -2, -2, -50, -20],
         [100, -20, 10, 5, 5, 10, -20, 100]
     ])

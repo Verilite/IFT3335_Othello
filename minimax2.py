@@ -1,6 +1,13 @@
 import numpy as np
 from game import Othello
 
+"""
+Sources consulted:
+https://www.ffothello.org/informatique/algorithmes/
+Livre de Russell et Norvig: Artificial Intelligence: A Modern Approach, 4th US ed.
+https://zzutk.github.io/docs/reports/2014.04%20-%20Searching%20Algorithms%20in%20Playing%20Othello.pdf
+"""
+
 # Définition des constantes
 EMPTY = 0
 BLACK = 1
